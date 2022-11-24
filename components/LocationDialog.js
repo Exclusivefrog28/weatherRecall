@@ -5,6 +5,7 @@ import { LocationContext } from '../context/LocationContext';
 import GetLocation from 'react-native-get-location';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const LocationDialog = ({ isVisible, hide }) => {
@@ -40,6 +41,7 @@ const LocationDialog = ({ isVisible, hide }) => {
     const save = () => {
         if (location !== locCandidate) {
             setLocation(locCandidate);
+            AsyncStorage.setItem('location', JSON.stringify(locCandidate));
             SplashScreen.show();
         }
         hide();
