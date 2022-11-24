@@ -262,7 +262,7 @@ dependencies {
     //splash screen
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.25'
     implementation project(':react-native-splash-screen')
-    implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
+    implementation 'androidx.core:core-splashscreen:1.0.0-beta02'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'

@@ -58,7 +58,6 @@ const App = () => {
       .then(value => {
 
         if (value !== null && JSON.stringify(location) !== value) { setLocation(JSON.parse(value)); }
-        console.log('refresh');
 
         let now = new Date();
         let yesterday = new Date(now.getTime() - 86400000);
