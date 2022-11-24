@@ -1,0 +1,84 @@
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import { Text, Card, useTheme } from 'react-native-paper';
+import { WeatherIcon } from './WeatherIcon';
+
+
+const WeatherCard = ({data}) => {
+
+    const theme = useTheme();
+
+    const weatherCodeMap = new Map([
+        [0, 'Clear sky'],
+        [1, 'Mainly clear'],
+        [2, 'Partly cloudy'],
+        [3, 'Overcast'],
+        [45, 'Fog'],
+        [48, 'Rime fog'],
+        [51, 'Light drizzle'],
+        [53, 'Moderate drizzle'],
+        [55, 'Dense drizzle'],
+        [56, 'Light freezing drizzle'],
+        [57, 'Dense freezing drizzle'],
+        [61, 'Slight rain'],
+        [63, 'Moderate rain'],
+        [65, 'Heavy rain'],
+        [66, 'Slight freezing rain'],
+        [67, 'Heavy freezing rain'],
+        [71, 'Slight snow'],
+        [73, 'Moderate snow'],
+        [75, 'Heavy snow'],
+        [77, 'Snow grains'],
+        [80, 'Slight rain showers'],
+        [81, 'Moderate rain showers'],
+        [82, 'Violent rain showers'],
+        [85, 'Slight snow showers'],
+        [86, 'Heavy snow showers'],
+        [95, 'Thunderstorm'],
+        [96, 'Thunderstorm with slight hail'],
+        [99, 'Thunderstorm with heavy hail'],
+      ]);
+
+    return (
+        <LinearGradient
+            start={{ x: 0, y: 1 }}
+            end={{ x: 1, y: 0 }}
+            colors={[theme.colors.elevation.level1, theme.colors.elevation.level5]}
+            style={styles.gradient}>
+            <Card mode="contained" style={styles.card}>
+                <View style={styles.cardTitle}>
+                    <Text variant="labelLarge" style={styles.titleText}>{data.title}</Text>
+                    <Text variant="bodyLarge" style={styles.subtitleText}>{data.time}</Text>
+                </View>
+                <Card.Content style={styles.cardContent}>
+                    <View style={styles.mainInfo}>
+                        <WeatherIcon weatherCode={data.weatherCode} night={data.night} />
+                        <Text style={styles.weatherText} variant={'labelLarge'}>{data.temp}°C</Text>
+                    </View>
+                    <View style={styles.sideInfo}>
+                        <Text variant="titleMedium">{weatherCodeMap.get(data.weatherCode)}</Text>
+                        <Text>Feels like: {data.tempApparent}°C</Text>
+                        <Text>Humidity: {data.humidity}%</Text>
+                    </View>
+                </Card.Content>
+            </Card>
+        </LinearGradient>
+    );
+};
+
+const styles = new StyleSheet.create({
+    container: { flex: 1, padding: 16 },
+    gradient: { flex: 1, borderRadius: 8, marginVertical: 10, paddingTop: 6 },
+    card: { flex: 1, paddingLeft: 6, paddingRight: 3, backgroundColor: 'transparent' },
+    cardTitle: { paddingTop: 8, paddingHorizontal: 20, flexDirection: 'row', alignContent: 'center' },
+    titleText: { flex: 20, textAlign: 'left', textAlignVertical: 'center', fontSize: 17 },
+    subtitleText: { flex: 13.5, textAlign: 'left', textAlignVertical: 'center', fontSize: 15 },
+    cardContent: { flexDirection: 'row', marginTop: 10 },
+    mainInfo: { flex: 3, flexDirection: 'row', justifyContent: 'flex-start' },
+    sideInfo: { flex: 2, justifyContent: 'center' },
+    weatherText: { fontSize: 30, bottom: 18, textAlignVertical: 'bottom' },
+});
+
+export default WeatherCard;
+
