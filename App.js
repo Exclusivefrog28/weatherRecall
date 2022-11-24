@@ -176,7 +176,8 @@ const App = () => {
         <NavigationContainer theme={useTheme()}>
           <Tab.Navigator
             initialRouteName="Home"
-            shifting={true}>
+            shifting={true}
+            compact={true}>
             <Tab.Screen
               name="Home"
               component={Home}
