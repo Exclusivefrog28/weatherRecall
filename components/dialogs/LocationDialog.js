@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Dialog, Button, TextInput, IconButton, Searchbar, Divider, List } from 'react-native-paper';
-import { LocationContext } from '../context/LocationContext';
+import { LocationContext } from '../../context/LocationContext';
 import GetLocation from 'react-native-get-location';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
