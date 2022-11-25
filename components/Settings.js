@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FAB } from 'react-native-paper';
 import AboutDialog from './dialogs/AboutDialog';
 import LocationDialog from './dialogs/LocationDialog';
+import PrefDialog from './dialogs/PrefDialog';
 
 const Settings = () => {
 
@@ -17,6 +18,10 @@ const Settings = () => {
   const showAboutDialog = () => setAboutVisible(true);
   const hideAboutDialog = () => setAboutVisible(false);
 
+  const [prefVisible, setPrefVisible] = useState(false);
+  const showPrefDialog = () => setPrefVisible(true);
+  const hidePrefDialog = () => setPrefVisible(false);
+
   return (
     <>
       <FAB.Group
@@ -26,7 +31,7 @@ const Settings = () => {
         icon="cog"
         actions={[
           { icon: 'information-outline', label: 'About', onPress: showAboutDialog },
-          { icon: 'dots-horizontal', label: 'Preferences' },
+          { icon: 'dots-horizontal', label: 'Preferences', onPress: showPrefDialog },
           { icon: 'map-marker-outline', label: 'Location', onPress: showLocDialog },
 
         ]}
@@ -37,6 +42,9 @@ const Settings = () => {
       <AboutDialog
         isVisible={aboutVisible}
         hide={hideAboutDialog} />
+      <PrefDialog
+        isVisible={prefVisible}
+        hide={hidePrefDialog} />
     </>
   );
 };

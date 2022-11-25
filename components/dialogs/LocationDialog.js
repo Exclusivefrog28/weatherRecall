@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Dialog, Button, TextInput, IconButton, Searchbar, Divider, List } from 'react-native-paper';
 import { LocationContext } from '../../context/LocationContext';
@@ -14,6 +14,10 @@ const LocationDialog = ({ isVisible, hide }) => {
     const [locCandidate, setLocCandidate] = useState(location);
     const [cities, setCities] = useState([]);
     const [searchLoading, setSearchLoading] = useState(false);
+
+    useEffect(() => {
+        setLocCandidate(location);
+    }, [location]);
 
     const renderItem = ({ item }) => (
         <CityItem item={item} />

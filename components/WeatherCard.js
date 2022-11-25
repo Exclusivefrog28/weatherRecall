@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { Text, Card, useTheme } from 'react-native-paper';
+import { PrefContext } from '../context/PrefContext';
 import { WeatherIcon } from './WeatherIcon';
 
 
-const WeatherCard = ({data}) => {
+const WeatherCard = ({ data }) => {
 
     const theme = useTheme();
+
+    const {preferences} = useContext(PrefContext);
 
     const weatherCodeMap = new Map([
         [0, 'Clear sky'],
@@ -38,7 +41,7 @@ const WeatherCard = ({data}) => {
         [95, 'Thunderstorm'],
         [96, 'Thunderstorm with slight hail'],
         [99, 'Thunderstorm with heavy hail'],
-      ]);
+    ]);
 
     return (
         <LinearGradient
@@ -54,11 +57,11 @@ const WeatherCard = ({data}) => {
                 <Card.Content style={styles.cardContent}>
                     <View style={styles.mainInfo}>
                         <WeatherIcon weatherCode={data.weatherCode} night={data.night} />
-                        <Text style={styles.weatherText} variant={'labelLarge'}>{data.temp}°C</Text>
+                        <Text style={styles.weatherText} variant={'labelLarge'}>{data.temp}{preferences.tempUnit}</Text>
                     </View>
                     <View style={styles.sideInfo}>
                         <Text variant="titleMedium">{weatherCodeMap.get(data.weatherCode)}</Text>
-                        <Text>Feels like: {data.tempApparent}°C</Text>
+                        <Text>Feels like: {data.tempApparent}{preferences.tempUnit}</Text>
                         <Text>Humidity: {data.humidity}%</Text>
                     </View>
                 </Card.Content>
@@ -77,7 +80,7 @@ const styles = new StyleSheet.create({
     cardContent: { flexDirection: 'row', marginTop: 10 },
     mainInfo: { flex: 3, flexDirection: 'row', justifyContent: 'flex-start' },
     sideInfo: { flex: 2, justifyContent: 'center' },
-    weatherText: { fontSize: 30, bottom: 18, textAlignVertical: 'bottom' },
+    weatherText: {flex: 1, lineHeight: 32, fontSize: 30, bottom: 18, textAlignVertical: 'bottom' },
 });
 
 export default WeatherCard;

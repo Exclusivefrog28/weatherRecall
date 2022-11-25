@@ -8,10 +8,12 @@ import AwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LineChart } from 'react-native-chart-kit';
 import LinearGradient from 'react-native-linear-gradient';
+import { PrefContext } from '../context/PrefContext';
 
 const Diagram = ({ timeFrame }) => {
 
   const { weatherData } = useContext(DataContext);
+  const { preferences } = useContext(PrefContext);
 
   const theme = useTheme();
 
@@ -38,17 +40,17 @@ const Diagram = ({ timeFrame }) => {
       case 'tempMax':
         data = weatherData.daily.tempMax.slice(0, timeFrame);
         color = (opacity = 1) => `rgba(220, 188, 255, ${opacity})`;
-        suffix = ' °C';
+        suffix = preferences.tempUnit;
         break;
       case 'tempMin':
         data = weatherData.daily.tempMin.slice(0, timeFrame);
         color = (opacity = 1) => `rgba(168, 200, 255, ${opacity})`;
-        suffix = ' °C';
+        suffix = preferences.tempUnit;
         break;
       case 'precip':
         data = weatherData.daily.precip.slice(0, timeFrame);
         color = (opacity = 1) => `rgba(0, 70, 138, ${opacity})`;
-        suffix = ' mm';
+        suffix = ' ' + preferences.precipUnit;
         break;
     }
 
@@ -62,7 +64,7 @@ const Diagram = ({ timeFrame }) => {
           strokeWidth: 5,
         }],
     });
-  }, [weatherData, selectedChart, timeFrame]);
+  }, [weatherData, selectedChart, timeFrame, preferences]);
 
   useEffect(() => {
     let maxAvg = 0;
@@ -70,9 +72,9 @@ const Diagram = ({ timeFrame }) => {
     let precipSum = 0;
 
     for (let i = 0; i < timeFrame; i++) {
-      maxAvg += weatherData.daily.tempMax[i];
-      minAvg += weatherData.daily.tempMin[i];
-      precipSum += weatherData.daily.precip[i];
+      maxAvg += (weatherData.daily.tempMax[i]);
+      minAvg += (weatherData.daily.tempMin[i]);
+      precipSum += (weatherData.daily.precip[i]);
     }
 
 
@@ -101,9 +103,9 @@ const Diagram = ({ timeFrame }) => {
               <Text style={styles.text} variant="bodyLarge">Total precipitation:</Text>
             </View>
             <View style={styles.column}>
-              <Text style={styles.text2} variant="bodyLarge">{aggregate.maxAvg} °C</Text>
-              <Text style={styles.text2} variant="bodyLarge">{aggregate.minAvg} °C</Text>
-              <Text style={styles.text2} variant="bodyLarge">{aggregate.precipSum} mm</Text>
+              <Text style={styles.text2} variant="bodyLarge">{aggregate.maxAvg}{preferences.tempUnit}</Text>
+              <Text style={styles.text2} variant="bodyLarge">{aggregate.minAvg}{preferences.tempUnit}</Text>
+              <Text style={styles.text2} variant="bodyLarge">{aggregate.precipSum} {preferences.precipUnit}</Text>
             </View>
           </Card.Content>
         </LinearGradient>
@@ -118,7 +120,7 @@ const Diagram = ({ timeFrame }) => {
           chartConfig={{
             backgroundGradientFrom: theme.colors.elevation.level1,
             backgroundGradientTo: theme.colors.elevation.level5,
-            decimalPlaces: 0, // optional, defaults to 2dp
+            decimalPlaces: chartData.suffix === ' inch' ? 2 : 0, // optional, defaults to 2dp
             color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
             labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
             style: {
@@ -183,7 +185,7 @@ const styles = new StyleSheet.create({
   cardContent: { flex: 1, flexDirection: 'row' },
   column: { flexDirection: 'column', justifyContent: 'center' },
   row: { flexDirection: 'row', alignItems: 'center', marginVertical: 4 },
-  chart: { marginVertical: 8, borderRadius: 8},
+  chart: { marginVertical: 8, borderRadius: 8 },
   text: { fontSize: 16, textAlignVertical: 'bottom' },
   text2: { fontSize: 16, textAlignVertical: 'bottom', textAlign: 'right', paddingLeft: 8 },
   gradient: { marginVertical: 10, padding: 10, flex: 1, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
