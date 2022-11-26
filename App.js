@@ -18,9 +18,13 @@ import { getData } from './util/API.js';
 const Tab = createMaterialBottomTabNavigator();
 
 const App = () => {
-  const numOfYears = 10;
+  const [preferences, setPreferences] = useState({
+    tempUnit: '°C',
+    precipUnit: 'mm',
+    numOfYears: 10,
+  });
 
-  const YearRoute = () => <Years numOfYears={numOfYears} />;
+  const YearRoute = () => <Years numOfYears={preferences.numOfYears} />;
   const WeekRoute = () => <Diagram timeFrame={7} />;
   const MonthRoute = () => <Diagram timeFrame={30} />;
 
@@ -43,10 +47,6 @@ const App = () => {
       { title: '2022', time: 'November 22. 14:00', temp: 12, humidity: 82, tempApparent: 11, weatherCode: 2 },
       { title: '2021', time: 'November 22. 14:00', temp: 8, humidity: 71, tempApparent: 9, weatherCode: 3 },
     ],
-  });
-  const [preferences, setPreferences] = useState({
-    tempUnit: '°C',
-    precipUnit: 'mm',
   });
 
   const locationValue = useMemo(

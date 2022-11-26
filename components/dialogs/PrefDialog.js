@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
-import { Dialog, Button, Text, SegmentedButtons } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Dialog, Button, Text, SegmentedButtons, TextInput, HelperText } from 'react-native-paper';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PrefContext } from '../../context/PrefContext';
@@ -16,12 +16,20 @@ const PrefDialog = ({ isVisible, hide }) => {
     }, [preferences]);
 
     const save = () => {
-        if (preferences !== localPref) {
-            setPreferences(localPref);
-            AsyncStorage.setItem('preferences', JSON.stringify(localPref));
-            SplashScreen.show();
+        if (!textHasErrors()) {
+            if (preferences !== localPref) {
+                setPreferences(localPref);
+                AsyncStorage.setItem('preferences', JSON.stringify(localPref));
+                SplashScreen.show();
+            }
+            hide();
         }
-        hide();
+    };
+
+    const textHasErrors = () => {
+        let num = parseInt(localPref.numOfYears, 10);
+        if (isNaN(localPref.numOfYears) || isNaN(num)) {return true;}
+        return (num < 1 || num > 60);
     };
 
     return (
@@ -66,6 +74,17 @@ const PrefDialog = ({ isVisible, hide }) => {
                         },
                     ]}
                 />
+                <Text style={styles.text}>Number of previous years:</Text>
+                <TextInput style={styles.input}
+                    mode="outlined"
+                    value={localPref.numOfYears}
+                    onChangeText={text => setLocalPref({ ...localPref, numOfYears: text })} />
+                <HelperText
+                    style={styles.input}
+                    type="error"
+                    visible={textHasErrors()}>
+                    Invalid value.
+                </HelperText>
             </Dialog.Content>
             <Dialog.Actions>
                 <Button onPress={hide}>Cancel</Button>
@@ -79,7 +98,7 @@ const styles = new StyleSheet.create({
     text: {},
     buttons: { padding: 10, alignSelf: 'center' },
     locationButton: { flex: 1 },
-    city: {},
+    input: { width: '30%', alignSelf: 'center' },
 });
 
 export default PrefDialog;

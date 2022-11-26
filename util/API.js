@@ -23,7 +23,7 @@ export function getData(location, preferences) {
         axios.get(`${locationURL}&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum&timezone=${timezone}&start_date=${monthago.toLocaleDateString('en-CA')}&end_date=${now.toLocaleDateString('en-CA')}`),
     ];
 
-    for (let i = 0; i < (10 - 1); i++) {
+    for (let i = 0; i < (preferences.numOfYears - 1); i++) {
         let date = new Date(now.getTime());
         date.setFullYear((now.getFullYear() - (i + 1)));
         date = date.toLocaleDateString('en-CA');
