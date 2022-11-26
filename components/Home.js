@@ -7,6 +7,8 @@ import WeatherCard from './WeatherCard';
 
 const Home = () => {
 
+  let now = new Date().getHours();
+
   const { weatherData } = useContext(DataContext);
 
   return (
@@ -14,9 +16,9 @@ const Home = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
         <View style={styles.container}>
-          <WeatherCard data={weatherData.home.current}/>
-          <WeatherCard data={weatherData.home.yesterday}/>
-          <WeatherCard data={weatherData.home.weekago}/>
+          <WeatherCard data={weatherData.hourly[0][now]}/>
+          <WeatherCard data={weatherData.hourly[1][now]}/>
+          <WeatherCard data={weatherData.hourly[7][now]}/>
         </View>
       </ScrollView>
       <Settings />

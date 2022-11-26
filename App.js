@@ -27,25 +27,7 @@ const App = () => {
   const MonthRoute = () => <Diagram timeFrame={30} />;
 
   const [location, setLocation] = useState({ lat: 47.2293.toFixed(4), long: 16.6123.toFixed(4) });
-  const [weatherData, setWeatherData] = useState({
-    home: {
-      current: { title: 'Current weather', time: 'Friday 17:00', temp: 12, humidity: 82, tempApparent: 11, weatherCode: 2 },
-      yesterday: { title: 'Yesterday', time: 'Thursday 17:00', temp: 8, humidity: 71, tempApparent: 9, weatherCode: 3 },
-      weekago: { title: 'Last week', time: 'November 4. 17:00', temp: 15, humidity: 98, tempApparent: 13, weatherCode: 5 },
-    },
-    daily: {
-      date: [1, 2],
-      tempMax: [0, 0],
-      tempMin: [0, 0],
-      precip: [0, 0],
-      sunrise: [0, 0],
-      sunset: [0, 0],
-    },
-    years: [
-      { title: '2022', time: 'November 22. 14:00', temp: 12, humidity: 82, tempApparent: 11, weatherCode: 2 },
-      { title: '2021', time: 'November 22. 14:00', temp: 8, humidity: 71, tempApparent: 9, weatherCode: 3 },
-    ],
-  });
+  const [weatherData, setWeatherData] = useState(null);
 
   const locationValue = useMemo(
     () => ({ location, setLocation }),
@@ -63,7 +45,7 @@ const App = () => {
   );
 
   useEffect(() => {
-    AsyncStorage.multiGet(['location', 'preferences', 'cache'])
+    AsyncStorage.multiGet(['location', 'preferences', '!cache'])
       .then(value => {
         let now = new Date();
         let dontFetch = false;
@@ -104,50 +86,54 @@ const App = () => {
       });
   }, [location, preferences]);
 
-  return (
-    <LocationContext.Provider value={locationValue}>
-      <DataContext.Provider value={weatherDataValue}>
-        <PrefContext.Provider value={prefValue}>
-          <NavigationContainer theme={useTheme()}>
-            <Tab.Navigator
-              initialRouteName="Home"
-              shifting={true}
-              compact={true}>
-              <Tab.Screen
-                name="Home"
-                component={Home}
-                options={{
-                  tabBarIcon: 'home',
-                  lazy: false,
-                }} />
-              <Tab.Screen
-                name="Last week"
-                component={WeekRoute}
-                options={{
-                  tabBarIcon: 'calendar-week',
-                  lazy: false,
-                }} />
-              <Tab.Screen
-                name="Last month"
-                component={MonthRoute}
-                options={{
-                  tabBarIcon: 'calendar-month',
-                  lazy: false,
-                }} />
-              <Tab.Screen
-                name="Previous years"
-                component={YearRoute}
-                options={{
-                  tabBarIcon: 'calendar-multiple',
-                  lazy: false,
-                }} />
-            </Tab.Navigator>
-          </NavigationContainer>
-          <StatusBar backgroundColor={useTheme().colors.background} />
-        </PrefContext.Provider>
-      </DataContext.Provider>
-    </LocationContext.Provider>
-  );
+  const theme = useTheme();
+  console.log(weatherData !== null);
+  if (weatherData !== null) {
+    return (
+      <LocationContext.Provider value={locationValue}>
+        <DataContext.Provider value={weatherDataValue}>
+          <PrefContext.Provider value={prefValue}>
+            <NavigationContainer theme={theme}>
+              <Tab.Navigator
+                initialRouteName="Home"
+                shifting={true}
+                compact={true}>
+                <Tab.Screen
+                  name="Home"
+                  component={Home}
+                  options={{
+                    tabBarIcon: 'home',
+                    lazy: false,
+                  }} />
+                <Tab.Screen
+                  name="Last week"
+                  component={WeekRoute}
+                  options={{
+                    tabBarIcon: 'calendar-week',
+                    lazy: false,
+                  }} />
+                <Tab.Screen
+                  name="Last month"
+                  component={MonthRoute}
+                  options={{
+                    tabBarIcon: 'calendar-month',
+                    lazy: false,
+                  }} />
+                <Tab.Screen
+                  name="Previous years"
+                  component={YearRoute}
+                  options={{
+                    tabBarIcon: 'calendar-multiple',
+                    lazy: false,
+                  }} />
+              </Tab.Navigator>
+            </NavigationContainer>
+            <StatusBar backgroundColor={theme.colors.background} />
+          </PrefContext.Provider>
+        </DataContext.Provider>
+      </LocationContext.Provider>
+    );
+  }
 };
 
 export default App;

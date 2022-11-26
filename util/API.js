@@ -5,21 +5,19 @@ import { dataToWeatherCode } from '../components/WeatherIcon';
 export function getData(location, preferences, now) {
     let tempUnit = (preferences.tempUnit === '°F') ? 'fahrenheit' : 'celsius';
 
-    let yesterday = new Date(now.getTime() - 86400000);
     let weekago = new Date(now.getTime() - 604800000);
+    let weekagoExc = new Date(now.getTime() - 691200000);
     let monthago = new Date(now.getTime() - 2592000000);
 
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').join('%2F');
 
-    let locationURL = `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.long}&temperature_unit=${tempUnit}&precipitation_unit=${preferences.precipUnit}`;
+    let forecastURL = `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.long}&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,weathercode&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum&temperature_unit=${tempUnit}&precipitation_unit=${preferences.precipUnit}&timezone=${timezone}`;
 
-    let baseURL = `${locationURL}&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,weathercode&daily=sunrise,sunset&timezone=${timezone}`;
+    let historicalURL = `https://archive-api.open-meteo.com/v1/era5?latitude=${location.lat}&longitude=${location.long}&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,rain,snowfall,cloudcover&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum&temperature_unit=${tempUnit}&precipitation_unit=${preferences.precipUnit}&timezone=${timezone}`;
 
     let requests = [
-        axios.get(`${baseURL}&start_date=${now.toLocaleDateString('en-CA')}&end_date=${now.toLocaleDateString('en-CA')}`),
-        axios.get(`${baseURL}&start_date=${yesterday.toLocaleDateString('en-CA')}&end_date=${yesterday.toLocaleDateString('en-CA')}`),
-        axios.get(`${baseURL}&start_date=${weekago.toLocaleDateString('en-CA')}&end_date=${weekago.toLocaleDateString('en-CA')}`),
-        axios.get(`${locationURL}&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum&timezone=${timezone}&start_date=${monthago.toLocaleDateString('en-CA')}&end_date=${now.toLocaleDateString('en-CA')}`),
+        axios.get(`${forecastURL}&start_date=${weekago.toLocaleDateString('en-CA')}&end_date=${now.toLocaleDateString('en-CA')}`),
+        axios.get(`${historicalURL}&start_date=${monthago.toLocaleDateString('en-CA')}&end_date=${weekagoExc.toLocaleDateString('en-CA')}`),
     ];
 
     for (let i = 0; i < (preferences.numOfYears - 1); i++) {
@@ -28,7 +26,7 @@ export function getData(location, preferences, now) {
         date = date.toLocaleDateString('en-CA');
         requests.push(
             axios.get(
-                `https://archive-api.open-meteo.com/v1/era5?latitude=${location.lat}&longitude=${location.long}&start_date=${date}&end_date=${date}&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,rain,snowfall,cloudcover&daily=sunrise,sunset&timezone=${timezone}&temperature_unit=${tempUnit}&precipitation_unit=${preferences.precipUnit}`
+                `${historicalURL}&start_date=${date}&end_date=${date}`
             )
         );
     }
@@ -38,85 +36,97 @@ export function getData(location, preferences, now) {
             .then(
                 axios.spread((...responses) => {
 
-                    let todayResponse = responses[0];
-                    let yesterdayResponse = responses[1];
-                    let weekagoResponse = responses[2];
-                    let monthData = responses[3];
-                    let yearsData = responses.slice(4, responses.length);
+                    let weekResponse = responses[0];
+                    let monthResponse = responses[1];
+                    let yearsResponse = responses.slice(2, responses.length);
 
-                    let offset = (preferences.tempUnit === ' K') ? -273.15 : 0;
+                    let day = [];
+                    let weekH = [];
+                    let monthH = [];
 
-                    let hour = now.getHours();
-
-                    let yearsDataParsed = [{
-                        title: now.getFullYear(),
-                        time: now.toLocaleString('en-US', { month: 'long', day: 'numeric' }) + '. ' + hour + ':00',
-                        night: true ? new Date(todayResponse.data.daily.sunrise).getTime() > now.getTime() || now.getTime() > new Date(todayResponse.data.daily.sunset).getTime() : false,
-                        temp: parseFloat((todayResponse.data.hourly.temperature_2m[hour] + offset).toFixed(2)),
-                        humidity: todayResponse.data.hourly.relativehumidity_2m[hour],
-                        tempApparent: parseFloat((todayResponse.data.hourly.apparent_temperature[hour] + offset).toFixed(2)),
-                        weatherCode: todayResponse.data.hourly.weathercode[hour],
-                    }];
-
-                    for (let i = 0; i < yearsData.length; i++) {
-                        let response = yearsData[i];
-                        let timeStamp = new Date(now.getTime());
-                        timeStamp.setFullYear((now.getFullYear() - (i + 1)));
-
-                        yearsDataParsed.push({
-                            title: (timeStamp.getFullYear()),
-                            time: timeStamp.toLocaleString('en-US', { month: 'long', day: 'numeric' }) + '. ' + hour + ':00',
-                            night: true ? new Date(response.data.daily.sunrise).getTime() > timeStamp.getTime() || timeStamp.getTime() > new Date(response.data.daily.sunset).getTime() : false,
-                            temp: parseFloat((response.data.hourly.temperature_2m[hour] + offset).toFixed(2)),
-                            humidity: response.data.hourly.relativehumidity_2m[hour],
-                            tempApparent: parseFloat((response.data.hourly.apparent_temperature[hour] + offset).toFixed(2)),
-                            weatherCode: dataToWeatherCode(response.data.hourly.cloudcover[hour], response.data.hourly.rain[hour], response.data.hourly.snowfall[hour]),
+                    for (let i = 1; i < 193; i++) {
+                        day.push({
+                            time: weekResponse.data.hourly.time[i - 1],
+                            temp: weekResponse.data.hourly.temperature_2m[i - 1],
+                            humidity: weekResponse.data.hourly.relativehumidity_2m[i - 1],
+                            tempApparent: weekResponse.data.hourly.apparent_temperature[i - 1],
+                            weatherCode: weekResponse.data.hourly.weathercode[i - 1],
+                        });
+                        if (i % 24 === 0) {
+                            weekH.push(day);
+                            day = [];
+                        }
+                    }
+                    for (let i = 1; i < 529; i++) {
+                        day.push({
+                            time: monthResponse.data.hourly.time[i - 1],
+                            temp: monthResponse.data.hourly.temperature_2m[i - 1],
+                            humidity: monthResponse.data.hourly.relativehumidity_2m[i - 1],
+                            tempApparent: monthResponse.data.hourly.apparent_temperature[i - 1],
+                            weatherCode: dataToWeatherCode(monthResponse.data.hourly.cloudcover[i - 1], monthResponse.data.hourly.rain[i - 1], monthResponse.data.hourly.snowfall[i - 1]),
+                        });
+                        if (i % 24 === 0) {
+                            monthH.push(day);
+                            day = [];
+                        }
+                    }
+                    let weekD = [];
+                    let monthD = [];
+                    for (let i = 0; i < weekResponse.data.daily.time.length; i++) {
+                        weekD.push({
+                            time: weekResponse.data.daily.time[i],
+                            tempMax: weekResponse.data.daily.temperature_2m_max[i],
+                            tempMin: weekResponse.data.daily.temperature_2m_min[i],
+                            precip: weekResponse.data.daily.precipitation_sum[i],
+                            sunset: weekResponse.data.daily.sunset[i],
+                            sunrise: weekResponse.data.daily.sunrise[i],
+                        });
+                    }
+                    for (let i = 0; i < monthResponse.data.daily.time.length; i++) {
+                        monthD.push({
+                            time: monthResponse.data.daily.time[i],
+                            tempMax: monthResponse.data.daily.temperature_2m_max[i],
+                            tempMin: monthResponse.data.daily.temperature_2m_min[i],
+                            precip: monthResponse.data.daily.precipitation_sum[i],
+                            sunset: monthResponse.data.daily.sunset[i],
+                            sunrise: monthResponse.data.daily.sunrise[i],
                         });
                     }
 
-                    resolve({
+                    let year = [];
+                    for (let i = 0; i < yearsResponse.length; i++) {
+                        let hours = [];
+                        for (let j = 0; j < yearsResponse[i].data.hourly.time.length; j++) {
+                            hours.push({
+                                time: yearsResponse[i].data.hourly.time[j],
+                                temp: yearsResponse[i].data.hourly.temperature_2m[j],
+                                humidity: yearsResponse[i].data.hourly.relativehumidity_2m[j],
+                                tempApparent: yearsResponse[i].data.hourly.apparent_temperature[j],
+                                weatherCode: dataToWeatherCode(yearsResponse[i].data.hourly.cloudcover[j], yearsResponse[i].data.hourly.rain[j], yearsResponse[i].data.hourly.snowfall[j]),
+                            });
+                        }
+                        year.push({
+                            hourly: hours,
+                            daily: {
+                                time: yearsResponse[i].data.daily.time[0],
+                                tempMax: yearsResponse[i].data.daily.temperature_2m_max[0],
+                                tempMin: yearsResponse[i].data.daily.temperature_2m_min[0],
+                                precip: yearsResponse[i].data.daily.precipitation_sum[0],
+                                sunset: yearsResponse[i].data.daily.sunset[0],
+                                sunrise: yearsResponse[i].data.daily.sunrise[0],
+                            },
+                        });
+                    }
+
+                    let rawData = {
                         timeStamp: now.toLocaleDateString('en-CA'),
                         location: JSON.stringify(location),
-                        home: {
-                            current: {
-                                title: 'Current weather',
-                                time: new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(now) + ' ' + hour + ':00',
-                                night: true ? new Date(todayResponse.data.daily.sunrise).getTime() > now.getTime() || now.getTime() > new Date(todayResponse.data.daily.sunset).getTime() : false,
-                                temp: parseFloat((todayResponse.data.hourly.temperature_2m[hour] + offset).toFixed(2)),
-                                humidity: todayResponse.data.hourly.relativehumidity_2m[hour],
-                                tempApparent: parseFloat((todayResponse.data.hourly.apparent_temperature[hour] + offset).toFixed(2)),
-                                weatherCode: todayResponse.data.hourly.weathercode[hour],
-                            },
-                            yesterday: {
-                                title: 'Yesterday',
-                                time: new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(yesterday) + ' ' + hour + ':00',
-                                night: true ? new Date(yesterdayResponse.data.daily.sunrise).getTime() > yesterday.getTime() || yesterday.getTime() > new Date(yesterdayResponse.data.daily.sunset).getTime() : false,
-                                temp: parseFloat((yesterdayResponse.data.hourly.temperature_2m[hour] + offset).toFixed(2)),
-                                humidity: yesterdayResponse.data.hourly.relativehumidity_2m[hour],
-                                tempApparent: parseFloat((yesterdayResponse.data.hourly.apparent_temperature[hour] + offset).toFixed(2)),
-                                weatherCode: yesterdayResponse.data.hourly.weathercode[hour],
-                            },
-                            weekago: {
-                                title: 'Last week',
-                                time: weekago.toLocaleString('en-US', { month: 'long', day: 'numeric' }) + '. ' + hour + ':00',
-                                night: true ? new Date(weekagoResponse.data.daily.sunrise).getTime() > weekago.getTime() || weekago.getTime() > new Date(weekagoResponse.data.daily.sunset).getTime() : false,
-                                temp: parseFloat((weekagoResponse.data.hourly.temperature_2m[hour] + offset).toFixed(2)),
-                                humidity: weekagoResponse.data.hourly.relativehumidity_2m[hour],
-                                tempApparent: parseFloat((weekagoResponse.data.hourly.apparent_temperature[hour] + offset).toFixed(2)),
-                                weatherCode: weekagoResponse.data.hourly.weathercode[hour],
-                            },
-                        },
-                        daily: {
-                            date: monthData.data.daily.time.reverse(),
-                            tempMax: monthData.data.daily.temperature_2m_max.reverse().map(val => parseFloat((val + offset).toFixed(2))),
-                            tempMin: monthData.data.daily.temperature_2m_min.reverse().map(val => parseFloat((val + offset).toFixed(2))),
-                            precip: monthData.data.daily.precipitation_sum.reverse(),
-                            sunrise: monthData.data.daily.sunrise.reverse(),
-                            sunset: monthData.data.daily.sunset.reverse(),
-                        },
-                        years: yearsDataParsed,
-                    });
-                    //console.log(weatherData.years);
+                        hourly: weekH.reverse().concat(monthH.reverse()),
+                        daily: weekD.reverse().concat(monthD.reverse()),
+                        yearly: year,
+                    };
+                    console.log(rawData.hourly);
+                    resolve(rawData);
                 })
             )
             .catch(errors => {
@@ -124,4 +134,8 @@ export function getData(location, preferences, now) {
                 console.error(errors);
             });
     });
+}
+
+export function parseData(rawData) {
+
 }

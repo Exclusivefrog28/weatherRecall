@@ -10,7 +10,7 @@ const WeatherCard = ({ data }) => {
 
     const theme = useTheme();
 
-    const {preferences} = useContext(PrefContext);
+    const { preferences } = useContext(PrefContext);
 
     const weatherCodeMap = new Map([
         [0, 'Clear sky'],
@@ -43,6 +43,23 @@ const WeatherCard = ({ data }) => {
         [99, 'Thunderstorm with heavy hail'],
     ]);
 
+    let time = new Date();
+    let title = new Date(data.time).getFullYear();
+
+    if (data.time === time.toLocaleDateString('en-CA') + 'T' + time.getHours() + ':00') {
+        title = 'Current weather';
+    } else {
+        time = new Date(time.getTime() - 86400000);
+        if (data.time === time.toLocaleDateString('en-CA') + 'T' + time.getHours() + ':00') {
+            title = 'Yesterday';
+        } else {
+            time = new Date(time.getTime() - 518400000);
+            if (data.time === time.toLocaleDateString('en-CA') + 'T' + time.getHours() + ':00') {
+                title = 'Last week';
+            }
+        }
+    }
+
     return (
         <LinearGradient
             start={{ x: 0, y: 1 }}
@@ -51,7 +68,7 @@ const WeatherCard = ({ data }) => {
             style={styles.gradient}>
             <Card mode="contained" style={styles.card}>
                 <View style={styles.cardTitle}>
-                    <Text variant="labelLarge" style={styles.titleText}>{data.title}</Text>
+                    <Text variant="labelLarge" style={styles.titleText}>{title}</Text>
                     <Text variant="bodyLarge" style={styles.subtitleText}>{data.time}</Text>
                 </View>
                 <Card.Content style={styles.cardContent}>
@@ -79,7 +96,7 @@ const styles = new StyleSheet.create({
     cardContent: { flexDirection: 'row', marginTop: 10 },
     mainInfo: { flex: 3, flexDirection: 'row', justifyContent: 'flex-start' },
     sideInfo: { flex: 2, justifyContent: 'center' },
-    weatherText: {flex: 1, lineHeight: 32, fontSize: 30, bottom: 18, textAlignVertical: 'bottom' },
+    weatherText: { flex: 1, lineHeight: 32, fontSize: 30, bottom: 18, textAlignVertical: 'bottom' },
 });
 
 export default WeatherCard;
