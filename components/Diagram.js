@@ -184,7 +184,6 @@ const styles = new StyleSheet.create({
   buttons: { alignSelf: 'center', position: 'absolute', bottom: '7.5%' },
   cardContent: { flex: 1, flexDirection: 'row' },
   column: { flexDirection: 'column', justifyContent: 'center' },
-  row: { flexDirection: 'row', alignItems: 'center', marginVertical: 4 },
   chart: { marginVertical: 8, borderRadius: 8 },
   text: { fontSize: 16, textAlignVertical: 'bottom' },
   text2: { fontSize: 16, textAlignVertical: 'bottom', textAlign: 'right', paddingLeft: 8 },

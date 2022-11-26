@@ -71,7 +71,6 @@ const WeatherCard = ({ data }) => {
 };
 
 const styles = new StyleSheet.create({
-    container: { flex: 1, padding: 16 },
     gradient: { flex: 1, borderRadius: 8, marginVertical: 10, paddingTop: 6 },
     card: { flex: 1, paddingLeft: 6, paddingRight: 3, backgroundColor: 'transparent' },
     cardTitle: { paddingTop: 8, paddingHorizontal: 20, flexDirection: 'row', alignContent: 'center' },

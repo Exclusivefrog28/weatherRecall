@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
 import { useTheme } from 'react-native-paper';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import SplashScreen from 'react-native-splash-screen';
@@ -9,7 +8,6 @@ import Years from './components/Years.js';
 import { DataContext } from './context/DataContext.js';
 import { LocationContext } from './context/LocationContext.js';
 import { PrefContext } from './context/PrefContext.js';
-import { dataToWeatherCode } from './components/WeatherIcon.js';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';

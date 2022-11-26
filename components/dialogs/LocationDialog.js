@@ -89,7 +89,6 @@ const styles = new StyleSheet.create({
     coordinates: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginVertical: 10 },
     textInput: { flex: 3, marginHorizontal: 5 },
     locationButton: { flex: 1 },
-    city: {},
 });
 
 export default LocationDialog;

@@ -26,15 +26,6 @@ const Home = () => {
 
 const styles = new StyleSheet.create({
   container: { flex: 1, padding: 16 },
-  gradient: { flex: 1, borderRadius: 8, marginVertical: 10, paddingTop: 6 },
-  card: { flex: 1, paddingLeft: 6, paddingRight: 3, backgroundColor: 'transparent' },
-  cardTitle: { paddingTop: 8, paddingHorizontal: 20, flexDirection: 'row', alignContent: 'center' },
-  titleText: { flex: 20, textAlign: 'left', textAlignVertical: 'center', fontSize: 17 },
-  subtitleText: { flex: 13.5, textAlign: 'left', textAlignVertical: 'center', fontSize: 15 },
-  cardContent: { flexDirection: 'row', marginTop: 10 },
-  mainInfo: { flex: 3, flexDirection: 'row', justifyContent: 'flex-start' },
-  sideInfo: { flex: 2, justifyContent: 'center' },
-  weatherText: { fontSize: 30, bottom: 18, textAlignVertical: 'bottom' },
 });
 
 export default Home;
