@@ -63,7 +63,7 @@ const LocationDialog = ({ isVisible, hide }) => {
                     <IconButton mode="contained" icon="crosshairs-gps" size={28} style={styles.locationButton} labelStyle={styles.locationIcon}
                         onPress={() => {
                             GetLocation.getCurrentPosition({ enableHighAccuracy: false, timeout: 15000 })
-                                .then(newLocation => { setLocCandidate({ lat: parseFloat(newLocation.latitude).toFixed(4), long: parseFloat(newLocation.longitude).toFixed(4) }); console.log(newLocation); })
+                                .then(newLocation => { setLocCandidate({ lat: parseFloat(newLocation.latitude).toFixed(4), long: parseFloat(newLocation.longitude).toFixed(4) });})
                                 .catch(error => { console.warn(error); });
                         }} />
                 </View>

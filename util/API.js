@@ -2,10 +2,9 @@ import axios from 'axios';
 import { dataToWeatherCode } from '../components/WeatherIcon';
 
 
-export function getData(location, preferences) {
+export function getData(location, preferences, now) {
     let tempUnit = (preferences.tempUnit === '°F') ? 'fahrenheit' : 'celsius';
 
-    let now = new Date();
     let yesterday = new Date(now.getTime() - 86400000);
     let weekago = new Date(now.getTime() - 604800000);
     let monthago = new Date(now.getTime() - 2592000000);
@@ -76,6 +75,8 @@ export function getData(location, preferences) {
                     }
 
                     resolve({
+                        timeStamp: now.toLocaleDateString('en-CA'),
+                        location: JSON.stringify(location),
                         home: {
                             current: {
                                 title: 'Current weather',

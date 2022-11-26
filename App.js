@@ -63,18 +63,44 @@ const App = () => {
   );
 
   useEffect(() => {
-    AsyncStorage.multiGet(['location', 'preferences'])
+    AsyncStorage.multiGet(['location', 'preferences', 'cache'])
       .then(value => {
-
-        if (value[0][1] !== null && JSON.stringify(location) !== value[0][1]) { setLocation(JSON.parse(value[0][1])); }
-        if (value[1][1] !== null && JSON.stringify(preferences) !== value[1][1]) { setPreferences(JSON.parse(value[1][1])); }
-
-        getData(location,preferences).then(
-          data => {
-            setWeatherData(data);
-            setTimeout(() => { SplashScreen.hide(); }, 500);
+        let now = new Date();
+        let dontFetch = false;
+        console.log('loading...');
+        if (value[0][1] !== null && value[1][1] !== null && value[2][1] !== null) {
+          if (JSON.stringify(location) !== value[0][1]) {
+            setLocation(JSON.parse(value[0][1]));
+            dontFetch = true;
+            console.log('Saved location read');
           }
-        );
+          else {
+            if (JSON.stringify(preferences) !== value[1][1]) {
+              setPreferences(JSON.parse(value[1][1]));
+              dontFetch = true;
+              console.log('Saved preferences read');
+            }
+            else {
+              let cache = JSON.parse(value[2][1]);
+              if (cache.location === JSON.stringify(location) && cache.timeStamp === now.toLocaleDateString('en-CA')) {
+                setWeatherData(cache);
+                console.log('Loaded data from cache.');
+                dontFetch = true;
+                setTimeout(() => { SplashScreen.hide(); }, 500);
+              }
+            }
+          }
+        }
+        if (!dontFetch) {
+          getData(location, preferences, now).then(
+            data => {
+              setWeatherData(data);
+              console.log('Fetched data.');
+              AsyncStorage.setItem('cache', JSON.stringify(data))
+                .then(setTimeout(() => { SplashScreen.hide(); }, 1000));
+            }
+          );
+        }
       });
   }, [location, preferences]);
 
