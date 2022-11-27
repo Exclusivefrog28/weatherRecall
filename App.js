@@ -45,7 +45,7 @@ const App = () => {
   );
 
   useEffect(() => {
-    AsyncStorage.multiGet(['location', 'preferences', '!cache'])
+    AsyncStorage.multiGet(['location', 'preferences', 'cache'])
       .then(value => {
         let now = new Date();
         let dontFetch = false;
@@ -87,7 +87,6 @@ const App = () => {
   }, [location, preferences]);
 
   const theme = useTheme();
-  console.log(weatherData !== null);
   if (weatherData !== null) {
     return (
       <LocationContext.Provider value={locationValue}>
