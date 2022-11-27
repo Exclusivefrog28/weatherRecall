@@ -71,7 +71,7 @@ export function getData(location, preferences, now) {
                             humidity: monthResponse.data.hourly.relativehumidity_2m[i - 1],
                             tempApparent: monthResponse.data.hourly.apparent_temperature[i - 1],
                             weatherCode: dataToWeatherCode(monthResponse.data.hourly.cloudcover[i - 1], monthResponse.data.hourly.rain[i - 1], monthResponse.data.hourly.snowfall[i - 1]),
-                            night: true ? sunrise < new Date(time).getTime() || sunset < new Date(time).getTime() : false,
+                            night: true ? sunrise > new Date(time).getTime() || sunset < new Date(time).getTime() : false,
                         });
                         if (i % 24 === 0) {
                             monthH.push(day);
@@ -114,19 +114,19 @@ export function getData(location, preferences, now) {
                                 humidity: yearsResponse[i].data.hourly.relativehumidity_2m[j],
                                 tempApparent: yearsResponse[i].data.hourly.apparent_temperature[j],
                                 weatherCode: dataToWeatherCode(yearsResponse[i].data.hourly.cloudcover[j], yearsResponse[i].data.hourly.rain[j], yearsResponse[i].data.hourly.snowfall[j]),
-                                night: true ? sunrise < new Date(time).getTime() || sunset < new Date(time).getTime() : false,
+                                night: true ? sunrise > new Date(time).getTime() || sunset < new Date(time).getTime() : false,
                             });
                         }
                         year.push({
                             hourly: [hours],
-                            daily: {
+                            daily: [{
                                 time: yearsResponse[i].data.daily.time[0],
                                 tempMax: yearsResponse[i].data.daily.temperature_2m_max[0],
                                 tempMin: yearsResponse[i].data.daily.temperature_2m_min[0],
                                 precip: yearsResponse[i].data.daily.precipitation_sum[0],
                                 sunset: yearsResponse[i].data.daily.sunset[0],
                                 sunrise: yearsResponse[i].data.daily.sunrise[0],
-                            },
+                            }],
                         });
                     }
 
