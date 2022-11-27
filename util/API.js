@@ -45,12 +45,16 @@ export function getData(location, preferences, now) {
                     let monthH = [];
 
                     for (let i = 1; i < 193; i++) {
+                        let sunset = new Date(weekResponse.data.daily.sunset[Math.floor((i - 1) / 24)]).getTime();
+                        let sunrise = new Date(weekResponse.data.daily.sunrise[Math.floor((i - 1) / 24)]).getTime();
+                        let time = weekResponse.data.hourly.time[i - 1];
                         day.push({
-                            time: weekResponse.data.hourly.time[i - 1],
+                            time: time,
                             temp: weekResponse.data.hourly.temperature_2m[i - 1],
                             humidity: weekResponse.data.hourly.relativehumidity_2m[i - 1],
                             tempApparent: weekResponse.data.hourly.apparent_temperature[i - 1],
                             weatherCode: weekResponse.data.hourly.weathercode[i - 1],
+                            night: true ? sunrise > new Date(time).getTime() || sunset < new Date(time).getTime() : false,
                         });
                         if (i % 24 === 0) {
                             weekH.push(day);
@@ -58,12 +62,16 @@ export function getData(location, preferences, now) {
                         }
                     }
                     for (let i = 1; i < 529; i++) {
+                        let sunset = new Date(monthResponse.data.daily.sunset[Math.floor((i - 1) / 24)]).getTime();
+                        let sunrise = new Date(monthResponse.data.daily.sunrise[Math.floor((i - 1) / 24)]).getTime();
+                        let time = monthResponse.data.hourly.time[i - 1];
                         day.push({
                             time: monthResponse.data.hourly.time[i - 1],
                             temp: monthResponse.data.hourly.temperature_2m[i - 1],
                             humidity: monthResponse.data.hourly.relativehumidity_2m[i - 1],
                             tempApparent: monthResponse.data.hourly.apparent_temperature[i - 1],
                             weatherCode: dataToWeatherCode(monthResponse.data.hourly.cloudcover[i - 1], monthResponse.data.hourly.rain[i - 1], monthResponse.data.hourly.snowfall[i - 1]),
+                            night: true ? sunrise < new Date(time).getTime() || sunset < new Date(time).getTime() : false,
                         });
                         if (i % 24 === 0) {
                             monthH.push(day);
@@ -121,11 +129,12 @@ export function getData(location, preferences, now) {
                     let rawData = {
                         timeStamp: now.toLocaleDateString('en-CA'),
                         location: JSON.stringify(location),
+                        numOfYears: preferences.numOfYears,
                         hourly: weekH.reverse().concat(monthH.reverse()),
                         daily: weekD.reverse().concat(monthD.reverse()),
                         yearly: year,
                     };
-                    console.log(rawData.hourly);
+                    //console.log(rawData.hourly);
                     resolve(rawData);
                 })
             )

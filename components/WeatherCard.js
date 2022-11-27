@@ -45,6 +45,11 @@ const WeatherCard = ({ data }) => {
 
     let time = new Date();
     let title = new Date(data.time).getFullYear();
+    let date = new Date(data.time);
+
+    if (time.getTime() - date.getTime() < 604800000) {
+        date = new Intl.DateTimeFormat('en-CA', { weekday: 'long' }).format(date) + ' ' + time.getHours() + ':00';
+    } else { date = date.toLocaleDateString('en-CA', { month: 'long', day: '2-digit' }) + ' ' + time.getHours() + ':00'; }
 
     if (data.time === time.toLocaleDateString('en-CA') + 'T' + time.getHours() + ':00') {
         title = 'Current weather';
@@ -69,7 +74,7 @@ const WeatherCard = ({ data }) => {
             <Card mode="contained" style={styles.card}>
                 <View style={styles.cardTitle}>
                     <Text variant="labelLarge" style={styles.titleText}>{title}</Text>
-                    <Text variant="bodyLarge" style={styles.subtitleText}>{data.time}</Text>
+                    <Text variant="bodyLarge" style={styles.subtitleText}>{date}</Text>
                 </View>
                 <Card.Content style={styles.cardContent}>
                     <View style={styles.mainInfo}>

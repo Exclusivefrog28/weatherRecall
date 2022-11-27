@@ -30,25 +30,34 @@ const Diagram = ({ timeFrame }) => {
     for (let i = 0; i < timeFrame; i++) {
       if (timeFrame > 7) {
         if ((i + 6) % 7 === 0) {
-          label.push(new Date(weatherData.daily.date[i]).toLocaleString('en-US', { month: 'numeric', day: 'numeric' }));
+          label.push(new Date(weatherData.daily[i].time).toLocaleString('en-US', { month: 'numeric', day: 'numeric' }));
         } else { label.push(''); }
       }
-      else { label.push(new Date(weatherData.daily.date[i]).toLocaleString('en-US', { month: 'short', day: 'numeric' })); }
+      else { label.push(new Date(weatherData.daily[i].time).toLocaleString('en-US', { month: 'short', day: 'numeric' })); }
     }
 
     switch (selectedChart) {
       case 'tempMax':
-        data = weatherData.daily.tempMax.slice(0, timeFrame);
+        data = [];
+        for (let i = 0; i < timeFrame; i++) {
+          data.push(weatherData.daily[i].tempMax);
+        }
         color = (opacity = 1) => `rgba(220, 188, 255, ${opacity})`;
         suffix = preferences.tempUnit;
         break;
       case 'tempMin':
-        data = weatherData.daily.tempMin.slice(0, timeFrame);
+        data = [];
+        for (let i = 0; i < timeFrame; i++) {
+          data.push(weatherData.daily[i].tempMin);
+        }
         color = (opacity = 1) => `rgba(168, 200, 255, ${opacity})`;
         suffix = preferences.tempUnit;
         break;
       case 'precip':
-        data = weatherData.daily.precip.slice(0, timeFrame);
+        data = [];
+        for (let i = 0; i < timeFrame; i++) {
+          data.push(weatherData.daily[i].precip);
+        }
         color = (opacity = 1) => `rgba(0, 70, 138, ${opacity})`;
         suffix = ' ' + preferences.precipUnit;
         break;
@@ -72,9 +81,9 @@ const Diagram = ({ timeFrame }) => {
     let precipSum = 0;
 
     for (let i = 0; i < timeFrame; i++) {
-      maxAvg += (weatherData.daily.tempMax[i]);
-      minAvg += (weatherData.daily.tempMin[i]);
-      precipSum += (weatherData.daily.precip[i]);
+      maxAvg += (weatherData.daily[i].tempMax);
+      minAvg += (weatherData.daily[i].tempMin);
+      precipSum += (weatherData.daily[i].precip);
     }
 
 

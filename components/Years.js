@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, ScrollView, StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DataContext } from '../context/DataContext';
 import Settings from './Settings';
@@ -9,7 +9,7 @@ const Years = ({ numOfYears }) => {
   const { weatherData } = useContext(DataContext);
 
   const renderItem = ({ item }) => (
-    <WeatherCard data={item} />
+    <WeatherCard data={item.hourly[new Date().getHours()]} />
   );
 
   return (
@@ -19,8 +19,8 @@ const Years = ({ numOfYears }) => {
         style={styles.list}
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
-        data={weatherData.years}
-        extraData={weatherData.years}
+        data={weatherData.yearly}
+        extraData={weatherData.yearly}
         renderItem={renderItem}
       />
       <Settings />
