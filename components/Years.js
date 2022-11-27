@@ -9,7 +9,7 @@ const Years = ({ numOfYears }) => {
   const { weatherData } = useContext(DataContext);
 
   const renderItem = ({ item }) => (
-    <WeatherCard data={item.hourly[new Date().getHours()]} />
+    <WeatherCard data={item} index={0}/>
   );
 
   return (

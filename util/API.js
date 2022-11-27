@@ -104,17 +104,21 @@ export function getData(location, preferences, now) {
                     let year = [];
                     for (let i = 0; i < yearsResponse.length; i++) {
                         let hours = [];
+                        let sunset = new Date(yearsResponse[i].data.daily.sunset[0]).getTime();
+                        let sunrise = new Date(yearsResponse[i].data.daily.sunrise[0]).getTime();
                         for (let j = 0; j < yearsResponse[i].data.hourly.time.length; j++) {
+                            let time = yearsResponse[i].data.hourly.time[j];
                             hours.push({
                                 time: yearsResponse[i].data.hourly.time[j],
                                 temp: yearsResponse[i].data.hourly.temperature_2m[j],
                                 humidity: yearsResponse[i].data.hourly.relativehumidity_2m[j],
                                 tempApparent: yearsResponse[i].data.hourly.apparent_temperature[j],
                                 weatherCode: dataToWeatherCode(yearsResponse[i].data.hourly.cloudcover[j], yearsResponse[i].data.hourly.rain[j], yearsResponse[i].data.hourly.snowfall[j]),
+                                night: true ? sunrise < new Date(time).getTime() || sunset < new Date(time).getTime() : false,
                             });
                         }
                         year.push({
-                            hourly: hours,
+                            hourly: [hours],
                             daily: {
                                 time: yearsResponse[i].data.daily.time[0],
                                 tempMax: yearsResponse[i].data.daily.temperature_2m_max[0],

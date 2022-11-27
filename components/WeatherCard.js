@@ -7,7 +7,7 @@ import { convertTemp } from '../util/Convert';
 import { WeatherIcon } from './WeatherIcon';
 
 
-const WeatherCard = ({ data, title }) => {
+const WeatherCard = ({ data, index, title }) => {
 
     const theme = useTheme();
 
@@ -44,8 +44,11 @@ const WeatherCard = ({ data, title }) => {
         [99, 'Thunderstorm with heavy hail'],
     ]);
 
+    let hourly = data.hourly[index];
+
     let time = new Date();
-    let date = new Date(data.time);
+    let hour = time.getHours();
+    let date = new Date(hourly[hour].time);
 
     if (title == null) { title = date.getFullYear(); }
 
@@ -66,13 +69,13 @@ const WeatherCard = ({ data, title }) => {
                 </View>
                 <Card.Content style={styles.cardContent}>
                     <View style={styles.mainInfo}>
-                        <WeatherIcon weatherCode={data.weatherCode} night={data.night} />
-                        <Text style={styles.weatherText} variant={'labelLarge'}>{convertTemp(data.temp, preferences.tempUnit)}{preferences.tempUnit}</Text>
+                        <WeatherIcon weatherCode={hourly[hour].weatherCode} night={hourly[hour].night} />
+                        <Text style={styles.weatherText} variant={'labelLarge'}>{convertTemp(hourly[hour].temp, preferences.tempUnit)}{preferences.tempUnit}</Text>
                     </View>
                     <View style={styles.sideInfo}>
-                        <Text variant="titleMedium">{weatherCodeMap.get(data.weatherCode)}</Text>
-                        <Text>Feels like: {convertTemp(data.tempApparent, preferences.tempUnit)}{preferences.tempUnit}</Text>
-                        <Text>Humidity: {data.humidity}%</Text>
+                        <Text variant="titleMedium">{weatherCodeMap.get(hourly[hour].weatherCode)}</Text>
+                        <Text>Feels like: {convertTemp(hourly[hour].tempApparent, preferences.tempUnit)}{preferences.tempUnit}</Text>
+                        <Text>Humidity: {hourly[hour].humidity}%</Text>
                     </View>
                 </Card.Content>
             </Card>
