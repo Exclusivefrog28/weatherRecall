@@ -78,8 +78,8 @@ const Covered = ({ code }) => {
 export function dataToWeatherCode(cloudCover, rain, snow) {
     if (snow > 0) { return 73; }
     if (rain > 0) { return 63; }
-    if (cloudCover > 75) { return 3; }
+    if (cloudCover > 80) { return 3; }
     if (cloudCover > 50) { return 2; }
-    if (cloudCover > 25) { return 1; }
+    if (cloudCover > 20) { return 1; }
     return 0;
 }

@@ -18,9 +18,9 @@ const PrefDialog = ({ isVisible, hide }) => {
     const save = () => {
         if (!textHasErrors()) {
             if (preferences !== localPref) {
+                if (preferences.numOfYears !== localPref.numOfYears) { SplashScreen.show(); }
                 setPreferences(localPref);
                 AsyncStorage.setItem('preferences', JSON.stringify(localPref));
-                SplashScreen.show();
             }
             hide();
         }
@@ -28,7 +28,7 @@ const PrefDialog = ({ isVisible, hide }) => {
 
     const textHasErrors = () => {
         let num = parseInt(localPref.numOfYears, 10);
-        if (isNaN(localPref.numOfYears) || isNaN(num)) {return true;}
+        if (isNaN(localPref.numOfYears) || isNaN(num)) { return true; }
         return (num < 1 || num > 60);
     };
 

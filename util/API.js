@@ -3,7 +3,7 @@ import { dataToWeatherCode } from '../components/WeatherIcon';
 
 
 export function getData(location, preferences, now) {
-    let tempUnit = (preferences.tempUnit === '°F') ? 'fahrenheit' : 'celsius';
+    let tempUnit = 'celsius';
 
     let weekago = new Date(now.getTime() - 604800000);
     let weekagoExc = new Date(now.getTime() - 691200000);
@@ -20,7 +20,7 @@ export function getData(location, preferences, now) {
         axios.get(`${historicalURL}&start_date=${monthago.toLocaleDateString('en-CA')}&end_date=${weekagoExc.toLocaleDateString('en-CA')}`),
     ];
 
-    for (let i = 0; i < (preferences.numOfYears - 1); i++) {
+    for (let i = 0; i < (preferences.numOfYears); i++) {
         let date = new Date(now.getTime());
         date.setFullYear((now.getFullYear() - (i + 1)));
         date = date.toLocaleDateString('en-CA');

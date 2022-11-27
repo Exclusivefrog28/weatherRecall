@@ -64,7 +64,7 @@ const App = () => {
             }
             else {
               let cache = JSON.parse(value[2][1]);
-              if (cache.location === JSON.stringify(location) && cache.timeStamp === now.toLocaleDateString('en-CA')) {
+              if (cache.location === JSON.stringify(location) && cache.timeStamp === now.toLocaleDateString('en-CA') && cache.numOfYears === preferences.numOfYears) {
                 setWeatherData(cache);
                 console.log('Loaded data from cache.');
                 dontFetch = true;

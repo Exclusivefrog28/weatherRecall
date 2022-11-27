@@ -3,10 +3,11 @@ import { View, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { Text, Card, useTheme } from 'react-native-paper';
 import { PrefContext } from '../context/PrefContext';
+import { convertTemp } from '../util/Convert';
 import { WeatherIcon } from './WeatherIcon';
 
 
-const WeatherCard = ({ data }) => {
+const WeatherCard = ({ data, title }) => {
 
     const theme = useTheme();
 
@@ -44,26 +45,13 @@ const WeatherCard = ({ data }) => {
     ]);
 
     let time = new Date();
-    let title = new Date(data.time).getFullYear();
     let date = new Date(data.time);
+
+    if (title == null) { title = date.getFullYear(); }
 
     if (time.getTime() - date.getTime() < 604800000) {
         date = new Intl.DateTimeFormat('en-CA', { weekday: 'long' }).format(date) + ' ' + time.getHours() + ':00';
     } else { date = date.toLocaleDateString('en-CA', { month: 'long', day: '2-digit' }) + ' ' + time.getHours() + ':00'; }
-
-    if (data.time === time.toLocaleDateString('en-CA') + 'T' + time.getHours() + ':00') {
-        title = 'Current weather';
-    } else {
-        time = new Date(time.getTime() - 86400000);
-        if (data.time === time.toLocaleDateString('en-CA') + 'T' + time.getHours() + ':00') {
-            title = 'Yesterday';
-        } else {
-            time = new Date(time.getTime() - 518400000);
-            if (data.time === time.toLocaleDateString('en-CA') + 'T' + time.getHours() + ':00') {
-                title = 'Last week';
-            }
-        }
-    }
 
     return (
         <LinearGradient
@@ -79,11 +67,11 @@ const WeatherCard = ({ data }) => {
                 <Card.Content style={styles.cardContent}>
                     <View style={styles.mainInfo}>
                         <WeatherIcon weatherCode={data.weatherCode} night={data.night} />
-                        <Text style={styles.weatherText} variant={'labelLarge'}>{data.temp}{preferences.tempUnit}</Text>
+                        <Text style={styles.weatherText} variant={'labelLarge'}>{convertTemp(data.temp, preferences.tempUnit)}{preferences.tempUnit}</Text>
                     </View>
                     <View style={styles.sideInfo}>
                         <Text variant="titleMedium">{weatherCodeMap.get(data.weatherCode)}</Text>
-                        <Text>Feels like: {data.tempApparent}{preferences.tempUnit}</Text>
+                        <Text>Feels like: {convertTemp(data.tempApparent, preferences.tempUnit)}{preferences.tempUnit}</Text>
                         <Text>Humidity: {data.humidity}%</Text>
                     </View>
                 </Card.Content>

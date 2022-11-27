@@ -9,6 +9,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LineChart } from 'react-native-chart-kit';
 import LinearGradient from 'react-native-linear-gradient';
 import { PrefContext } from '../context/PrefContext';
+import { convertLength, convertTemp } from '../util/Convert';
 
 const Diagram = ({ timeFrame }) => {
 
@@ -40,7 +41,7 @@ const Diagram = ({ timeFrame }) => {
       case 'tempMax':
         data = [];
         for (let i = 0; i < timeFrame; i++) {
-          data.push(weatherData.daily[i].tempMax);
+          data.push(convertTemp(weatherData.daily[i].tempMax, preferences.tempUnit));
         }
         color = (opacity = 1) => `rgba(220, 188, 255, ${opacity})`;
         suffix = preferences.tempUnit;
@@ -48,7 +49,7 @@ const Diagram = ({ timeFrame }) => {
       case 'tempMin':
         data = [];
         for (let i = 0; i < timeFrame; i++) {
-          data.push(weatherData.daily[i].tempMin);
+          data.push(convertTemp(weatherData.daily[i].tempMin, preferences.tempUnit));
         }
         color = (opacity = 1) => `rgba(168, 200, 255, ${opacity})`;
         suffix = preferences.tempUnit;
@@ -56,7 +57,7 @@ const Diagram = ({ timeFrame }) => {
       case 'precip':
         data = [];
         for (let i = 0; i < timeFrame; i++) {
-          data.push(weatherData.daily[i].precip);
+          data.push(convertLength(weatherData.daily[i].precip, preferences.precipUnit));
         }
         color = (opacity = 1) => `rgba(0, 70, 138, ${opacity})`;
         suffix = ' ' + preferences.precipUnit;
@@ -81,18 +82,17 @@ const Diagram = ({ timeFrame }) => {
     let precipSum = 0;
 
     for (let i = 0; i < timeFrame; i++) {
-      maxAvg += (weatherData.daily[i].tempMax);
-      minAvg += (weatherData.daily[i].tempMin);
-      precipSum += (weatherData.daily[i].precip);
+      maxAvg += (convertTemp(weatherData.daily[i].tempMax, preferences.tempUnit));
+      minAvg += (convertTemp(weatherData.daily[i].tempMin, preferences.tempUnit));
+      precipSum += (convertLength(weatherData.daily[i].precip, preferences.precipUnit));
     }
-
 
     setAggregate({
       maxAvg: (maxAvg / timeFrame).toFixed(2),
       minAvg: (minAvg / timeFrame).toFixed(2),
       precipSum: precipSum.toPrecision(2),
     });
-  }, [weatherData, timeFrame]);
+  }, [weatherData, timeFrame, preferences]);
 
 
   return (

@@ -16,9 +16,10 @@ const Home = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
         <View style={styles.container}>
-          <WeatherCard data={weatherData.hourly[0][now]}/>
-          <WeatherCard data={weatherData.hourly[1][now]}/>
-          <WeatherCard data={weatherData.hourly[7][now]}/>
+          <WeatherCard data={weatherData.hourly[0][now]} title="Current weather" />
+          <WeatherCard data={weatherData.hourly[1][now]} title="Yesterday" />
+          <WeatherCard data={weatherData.hourly[7][now]} title="Last week" />
+          <WeatherCard data={weatherData.hourly[29][now]} title="30 days ago" />
         </View>
       </ScrollView>
       <Settings />
@@ -27,7 +28,7 @@ const Home = () => {
 };
 
 const styles = new StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: { flex: 1, padding: 16, paddingBottom: 80 },
 });
 
 export default Home;
