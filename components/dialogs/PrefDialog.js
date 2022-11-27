@@ -98,7 +98,7 @@ const styles = new StyleSheet.create({
     text: {},
     buttons: { padding: 10, alignSelf: 'center' },
     locationButton: { flex: 1 },
-    input: { width: '30%', alignSelf: 'center' },
+    input: { width: '30%', alignSelf: 'center', textAlign: 'center'},
 });
 
 export default PrefDialog;
