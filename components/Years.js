@@ -30,7 +30,7 @@ const Years = ({ numOfYears }) => {
 
 const styles = new StyleSheet.create({
   container: { paddingBottom: 96},
-  list: {flex: 1, padding: 16},
+  list: {flex: 1, padding: 10},
 });
 
 export default Years;

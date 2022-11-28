@@ -26,7 +26,7 @@ const Home = () => {
 };
 
 const styles = new StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingBottom: 80 },
+  container: { flex: 1, padding: 10, paddingBottom: 80 },
 });
 
 export default Home;
