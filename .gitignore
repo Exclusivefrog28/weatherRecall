@@ -67,3 +67,4 @@ buck-out/
 android/app/build.gradle
 android/app/src/main/assets/index.android.bundle
 android/app/your_key_name.keystore
+android/app/build.gradle
