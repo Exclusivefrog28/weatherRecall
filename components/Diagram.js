@@ -107,8 +107,8 @@ const Diagram = ({ timeFrame }) => {
           style={styles.gradient}>
           <Card.Content style={styles.cardContent}>
             <View style={styles.column}>
-              <Text style={styles.text} variant="bodyLarge">Average of maximum temperatures:</Text>
-              <Text style={styles.text} variant="bodyLarge">Average of minimum temperatures:</Text>
+              <Text style={styles.text} variant="bodyLarge">Average maximum temperature:</Text>
+              <Text style={styles.text} variant="bodyLarge">Average minimum temperature:</Text>
               <Text style={styles.text} variant="bodyLarge">Total precipitation:</Text>
             </View>
             <View style={styles.column}>
@@ -121,7 +121,7 @@ const Diagram = ({ timeFrame }) => {
         <LineChart
           data={chartData}
           width={useWindowDimensions().width - 32}
-          height={530}
+          height={useWindowDimensions().height / 1.5}
           withShadow={false}
           segments={5}
           yAxisSuffix={chartData.suffix}
