@@ -62,3 +62,8 @@ buck-out/
 # Ruby / CocoaPods
 /ios/Pods/
 /vendor/bundle/
+
+# Build
+android/app/build.gradle
+android/app/src/main/assets/index.android.bundle
+android/app/your_key_name.keystore
